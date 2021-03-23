@@ -1,0 +1,40 @@
+        first_names=('Jackson','Noah','Liam','Lucas','Benjamin','Oliver','Ethan','Jacob','Leo','Logan','William','Grayson','Jack','James','Aiden','Lincoln ','Theo','Thomas','Mateo','Hudson','Gabriel ','Mason ','Owen ','Kayden','Alexander','Luca','Jayden','Nathan','Hunter','Theodore','Levi','Connor','Caleb','Elliot','Daniel','Austin','Colton','Felix','Isaac','Carter','Henry','Myles','Adam','Luke','Elijah','Emmett','Asher','Declan','Samuel','Sebastian','Sophia','Olivia','Emma','Amelia','Aria','Charlotte','Ava','Mia','Mila','Chloe','Isabella','Zoe','Abigail','Riley','Lily','Everly','Layla','Ella','Maya','Nora','Hannah','Scarlett','Harper','Avery','Isla','Alice','Hailey','Emily','Charlie','Sophie','Evelyn','Violet','Madison','Peyton','Madelyn','Ellie','Elizabeth','Emilia','Isabelle','Victoria','Grace','Lyla','Audrey','Aliyah','Claire','Lucy','Addison','Aubrey','Brooklyn','Julia')
+        last_names=('Johnson','Smith', 'Williams', 'Parsons', 'Walsh', 'Gauthier', 'MacDonald', 'Gallant', 'Arsenault', 'Campbell', 'Leblanc', 'Tremblay', 'Gagnon', 'Wilson', 'Lee', 'Penner', 'Miller', 'Anderson', 'Smith', 'Brown')
+        count_of_athlete = 20
+        count_of_competition = 10
+        count_of_registers = 40
+        # populate athlete
+        for x in range(count_of_athlete):
+            name = generate_name(first_names)
+            surname = generate_name(last_names)
+            dob = generate_date(1980,2003)
+            gender = generate_gender()
+            uid = str(x)
+            cur.execute("INSERT INTO athlete (name_athlete, surname_athlete, date_of_birth_athlete, identified_gender_athlete," +
+            " id_athlete) VALUES ('" + name + "', '" + surname + "' , '" + dob + "', '" + gender + "', " + uid + ");")
+        venue_names=('Minto Sports Complex', 'TD Place', 'Ravens Nest', 'Jim Durrell Recreation Centre', 'Centre Robert Guertin')
+        # populate competition
+        for x in range(count_of_competition):
+            cid = str(x)
+            name = 'Competition ' + str(int(cid)+1)
+            comp_date = generate_date(2021,2021)
+            venue = generate_name(venue_names)
+            duration = str(randint(1,7)) + ' days'
+            cur.execute("INSERT INTO competition (id_competition, name_competition, start_date_competition, venue_competition, duration_competition)" +
+            " VALUES ('" + cid + "', '" + name + "' , '" + comp_date + "', '" + venue + "', '" + duration + "');")
+        # populate registers and make sure it does not register the same athlete to the same competition more than once
+        athlete_and_competition = {}
+        for x in range(count_of_athlete):
+            athlete_and_competition[x] = set()
+        for x in range(count_of_registers):
+            rid = x
+            uid = randint(0,count_of_athlete-1)
+            cid = randint(0,count_of_competition-1)
+            current_dict_values = athlete_and_competition[uid]
+            while cid in current_dict_values:
+                uid = randint(0,count_of_athlete-1)
+                current_dict_values = athlete_and_competition[uid]
+                cid = randint(0,count_of_competition-1)
+            athlete_and_competition[uid].update({cid})
+            cur.execute("INSERT INTO registers (id_registers, id_athlete, id_competition) VALUES (" +
+            str(rid) + ", " + str(uid) + ", " + str(cid) + ")")
